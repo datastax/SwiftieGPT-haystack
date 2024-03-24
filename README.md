@@ -1,38 +1,73 @@
-# SwiftieGPT
+# SwiftieGPT - Haystack Edition
 
 ![SwiftieGPT](gh-hero.png)
 
 SwiftieGPT knows Taylor all too well. Ask questions in a clear and concise manner and get back responses based on details from publicly available data on Taylor. From tour dates to song lyrics, learn everything there is to know about the songstress here.
 
-## Features
+## The Haystack Fork
 
-- **Astra DB Integration**: Store and retrieve data from your Astra DB database with ease.
-- **OpenAI Integration**: Leverage the power of OpenAI to generate intelligent responses.
-- **Easy Deployment**: Deploy your chatbot to Vercel with just a few clicks.
-- **Customizable**: Modify and extend the chatbot to suit your needs.
+This is a fork of [SwiftieGPT](https://github.com/datastax/SwiftieGPT) that uses Haystack for ingesting webpages and RSS files.
 
-## Getting Started
+## Prerequisites
 
-### Prerequisites
+- Python
+- Node.js
+- An Astra DB account. You can [create one here](https://astra.datastax.com/signup).
+- An OpenAI account. You can [create one here](https://platform.openai.com/).
 
-- An Astra DB account. You can [create one here](https://astra.datastax.com/register).
-    - An Astra Vector Database
-- An OpenAI account and api key [create one here](https://platform.openai.com/)
-- A Cohere account and api key [create one here](https://cohere.com/)
+## Set-up
 
-### Setup
+Clone this repository to your local machine:
 
-1. Clone this repository to your local machine.
-2. Install the dependencies by running `npm install` in your terminal.
-3. Set up the following environment variables in your IDE or `.env` file:
-    - `OPENAI_API_KEY`: api key for OPENAI
-    - `COHERE_API_KEY`: api key for COHERE
-    - `ASTRA_DB_ENDPOINT`: Your Astra DB vector database endpoint
-        - Copy from the `Database Detail`
-    - `ASTRA_DB_APPLICATION_TOKEN`: The generated app token for your Astra database
-        - To create a new token go to your database's `Connect` tab and click `Generate Token`. (your Application Token begins with `AstraCS:...`)
-    - `ASTRA_DB_COLLECTION`: The name of your Astra Collection
+```
+git clone git@github.com:datastax/SwiftieGPT-haystack.git
+```
 
-### Running the Project
+Set-up your Python environment:
 
-To start the development server, run `npm run dev` in your terminal. Open [http://localhost:3000](http://localhost:3000) to view the chatbot in your browser.
+```
+python -m venv venv  
+source venv/bin/activate 
+```
+
+Install the Python dependencies:
+
+```
+pip install -r requirements.txt
+```
+
+Install the Node.js app dependencies:
+
+```
+npm install
+```
+
+Copy the `.env.example` file to `.env` and set up the following environment variables:
+
+- `OPENAI_API_KEY`: API key for OpenAI
+- `ASTRA_DB_API_ENDPOINT`: Your Astra DB vector database endpoint
+- `ASTRA_DB_APPLICATION_TOKEN`: The generated app token for your Astra DB
+
+## Ingesting data to Astra DB
+
+Load the website pages:
+
+```
+python scripts/load_websites.py
+```
+
+Load the RSS files:
+
+```
+python scripts/load_rss.py
+```
+
+### Running the Next.js web app
+
+Run:
+
+```
+npm run dev
+``` 
+
+Open [http://localhost:3000](http://localhost:3000) to view the chatbot in your browser.
