@@ -3,7 +3,6 @@ from dotenv import load_dotenv
 from haystack import Pipeline
 from haystack.components.fetchers import LinkContentFetcher
 from haystack.components.converters import HTMLToDocument
-from rss import RSSToDocument
 from haystack.components.writers import DocumentWriter
 from haystack.components.preprocessors import DocumentSplitter
 from haystack.components.embedders import SentenceTransformersDocumentEmbedder

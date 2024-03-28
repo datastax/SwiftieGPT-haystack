@@ -18,22 +18,24 @@ const openai = new OpenAI({
 const astraDb = new AstraDB(ASTRA_DB_APPLICATION_TOKEN, ASTRA_DB_API_ENDPOINT);
 
 export async function POST(req: Request) {
-  
 
   try {
-    const {messages} = await req.json();
+    const { messages } = await req.json();
     const latestMessage = messages[messages?.length - 1]?.content;
 
     let docContext = '';
 
     const extractor = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
     const output = await extractor(latestMessage, { pooling: 'mean', normalize: true });
+    const vector = output.tolist()[0]
+
+    console.log(JSON.stringify(vector))
 
     try {
       const collection = await astraDb.collection(ASTRA_DB_COLLECTION);
       const cursor = collection.find(null, {
         sort: {
-          $vector: output.tolist()[0],
+          $vector: vector,
         },
         limit: 10,
       });
@@ -54,12 +56,13 @@ export async function POST(req: Request) {
       content: `You are an AI assistant who is a Taylor Swift super fan. 
         Use the below context to augement what you know about Taylor Swift and her music.
         The context will provide you with the most recent page data from her wikipedia, tour website and others.
-        If the context doesn't include the information you need answer based on your existing knowledge and don't 
-        mention the source of your information or what the context does or doesn't include.
+        If the context doesn't include the information you need answer based on your existing knowledge, just say you don't know.
+        Don't mention the source of your information or what the context does or doesn't include.
+        If the question asked is not about Taylor Swift, her music, her tour or her work as a musical artist, decline to answer.
         Format responses using markdown where applicable and don't return images.
         ----------------
         START CONTEXT
-        ${docContext}
+        ${ docContext }
         END CONTEXT
         ----------------
         QUESTION: ${latestMessage}
